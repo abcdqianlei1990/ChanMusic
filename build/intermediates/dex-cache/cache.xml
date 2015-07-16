@@ -2,18 +2,39 @@
 <items version="2" >
 
     <item
-        jar="D:\Program Files\Android\sdk\extras\android\m2repository\com\android\support\support-v4\18.0.0\support-v4-18.0.0.jar"
+        jar="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.0\classes.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="44ec51e9d395a47aab135e5e1b556c0007442156">
-        <dex dex="D:\AndroidStudioProjects\MyMusic\app\build\intermediates\pre-dexed\debug\support-v4-18.0.0-b520718d0775744d4766cd244bf8663f63f2c855.jar" />
+        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
+        <dex dex="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\pre-dexed\debug\classes-0dfd2e05bf6c119b3e2abce28da48a1d3c7a8814.jar" />
     </item>
     <item
-        jar="D:\AndroidStudioProjects\MyMusic\app\libs\pinyin4j-2.5.0.jar"
+        jar="D:\Program Files\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.0\support-annotations-22.2.0.jar"
         jumboMode="false"
         revision="21.1.2"
-        sha1="ae353005f973da1cd8545b54354504c2503f6865">
-        <dex dex="D:\AndroidStudioProjects\MyMusic\app\build\intermediates\pre-dexed\debug\pinyin4j-2.5.0-618f491b160485a4feaf267241b9f7102898a2f5.jar" />
+        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
+        <dex dex="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\pre-dexed\debug\support-annotations-22.2.0-ed148b79a2e32691150cd675671d029625c3d8f8.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
+        <dex dex="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\pre-dexed\debug\classes-746ee1027c3103df61bb2118bbb9c04ebe26dc84.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\libs\internal_impl-22.2.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\pre-dexed\debug\internal_impl-22.2.0-895ffeb372d18521000477354247a9e9d1d782c4.jar" />
+    </item>
+    <item
+        jar="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\exploded-aar\com.android.support\percent\22.2.0\classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="928b73afabcd116944e9487771d4121168eac1a4">
+        <dex dex="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\pre-dexed\debug\classes-779762322e47487188d193f496817a8c79b044c3.jar" />
     </item>
 
 </items>
