@@ -38,7 +38,7 @@
             android:id="@+id/header_iv_1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher"
+            android:src="@mipmap/ktv_share_default_header"
             app:layout_widthPercent="20%"/>
         <ImageView
             android:id="@+id/header_iv_2"

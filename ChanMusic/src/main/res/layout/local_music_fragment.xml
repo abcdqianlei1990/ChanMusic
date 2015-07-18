@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#B8D5ED"
     android:layout_width="match_parent" android:layout_height="match_parent">
     <TextView
         android:id="@+id/tv_local_music_title"
@@ -27,11 +28,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginRight="15dp"
-        android:src="@mipmap/start"/>
+        android:background="#B8D5ED"
+        android:src="@mipmap/fx_star_itv_home_list_btn"/>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_below="@+id/ib_start"/>
@@ -39,6 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ib_start"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
      />

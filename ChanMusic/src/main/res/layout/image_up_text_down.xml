@@ -5,49 +5,72 @@
 
     <ImageView
         android:id="@+id/iv_like"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"/>
+        app:layout_widthPercent="25%"
+        android:src="@mipmap/bg_img_audio_unlike"/>
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tv1"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_widthPercent="25%"
         android:layout_below="@+id/iv_like"
+        android:textColor="@android:color/black"
         android:gravity="center"
         android:text="我喜欢"/>
+
     <ImageView
-        android:id="@+id/iv_mylist"
-        android:layout_width="wrap_content"
+        android:id="@+id/iv_my_list"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_widthPercent="25%"
         android:layout_toRightOf="@+id/iv_like"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/song_list"/>
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tv2"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_mylist"
-        android:layout_toRightOf="@+id/iv_like"
+        app:layout_widthPercent="25%"
+        android:layout_below="@+id/iv_my_list"
+        android:layout_toRightOf="@+id/tv1"
+        android:gravity="center"
+        android:textColor="@android:color/black"
         android:text="我的歌单"/>
+
     <ImageView
         android:id="@+id/iv_download"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/iv_mylist"
-        android:src="@mipmap/ic_launcher"/>
+        app:layout_widthPercent="25%"
+        android:layout_toRightOf="@+id/iv_my_list"
+        android:src="@mipmap/ktv_dynamic_comment_more_drawable"/>
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tv3"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_download"
-        android:layout_toRightOf="@+id/iv_mylist"
+        app:layout_widthPercent="25%"
+        android:layout_below="@+id/iv_my_list"
+        android:layout_toRightOf="@+id/tv2"
+        android:textColor="@android:color/black"
+        android:gravity="center"
         android:text="下载管理"/>
+
     <ImageView
         android:id="@+id/iv_latest"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_widthPercent="25%"
         android:layout_toRightOf="@+id/iv_download"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/latest_song"/>
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tv4"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_latest"
-        android:layout_toRightOf="@+id/iv_download"
+        app:layout_widthPercent="25%"
+        android:layout_below="@+id/iv_my_list"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:layout_toRightOf="@+id/tv3"
         android:text="最近播放"/>
+
 </android.support.percent.PercentRelativeLayout>
