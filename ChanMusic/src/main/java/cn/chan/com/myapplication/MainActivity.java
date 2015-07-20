@@ -1,24 +1,62 @@
 package cn.chan.com.myapplication;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity {
 
+public class MainActivity extends Activity implements View.OnClickListener{
+    private ActionBar mActionBar;
+    private Context mContext;
+    private ImageView mIvListen;
+    private ImageView mIvSee;
+    private ImageView mIvSing;
+    private ImageView mIvSetting;
+    private View mCustomView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initParams();
+        initViews();
+        initEvents();
     }
 
-
+    private void initParams() {
+        mContext = this;
+        mActionBar = getActionBar();
+        mCustomView = LayoutInflater.from(mContext).inflate(R.layout.header,null);
+        mIvListen = (ImageView) mCustomView.findViewById(R.id.header_iv_2);
+        mIvSee = (ImageView) mCustomView.findViewById(R.id.header_iv_3);
+        mIvSing = (ImageView) mCustomView.findViewById(R.id.header_iv_4);
+        mIvSetting = (ImageView) mCustomView.findViewById(R.id.header_iv_5);
+    }
+    private void initEvents() {
+        mIvListen.setOnClickListener(this);
+        mIvSee.setOnClickListener(this);
+        mIvSing.setOnClickListener(this);
+        mIvSetting.setOnClickListener(this);
+    }
+    private void initViews() {
+        if(mActionBar != null){
+            mActionBar.setDisplayShowCustomEnabled(true);
+            mActionBar.setCustomView(mCustomView);
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
@@ -35,5 +73,25 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.header_iv_2:
+                Toast.makeText(this,"listen is clicked",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.header_iv_3:
+                Toast.makeText(this,"see is clicked",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.header_iv_4:
+                Toast.makeText(this,"sing is clicked",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.header_iv_5:
+                Toast.makeText(this,"setting is clicked",Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
     }
 }
