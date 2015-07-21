@@ -20,11 +20,13 @@
             android:drawableRight="@mipmap/icon_search"
             android:background="#B8D5ED"
             />
-        <include
+        <fragment
+            android:id="@+id/local_music_fragment"
+            android:name="cn.chan.com.fragment.LocalMusicPartFragment"
             android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            layout="@layout/local_music_fragment" />
+            />
         <include
             android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
@@ -34,26 +36,27 @@
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                layout="@layout/local_music_fragment" />
+                layout="@layout/local_music_part_fragment" />
             <include
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                layout="@layout/local_music_fragment" />
+                layout="@layout/local_music_part_fragment" />
             <include
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                layout="@layout/local_music_fragment" />
+                layout="@layout/local_music_part_fragment" />
             <include
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                layout="@layout/local_music_fragment" />
+                layout="@layout/local_music_part_fragment" />
+
             <include
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                layout="@layout/local_music_fragment" />
+                layout="@layout/local_music_part_fragment" />
         </LinearLayout>
 </ScrollView>

@@ -1,4 +1,4 @@
-package cn.chan.com.myapplication;
+package cn.chan.com.activity;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

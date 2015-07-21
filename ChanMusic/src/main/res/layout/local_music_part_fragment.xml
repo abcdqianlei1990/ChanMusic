@@ -13,14 +13,16 @@
         android:textSize="22dp"
         android:text="本地音乐"/>
     <TextView
+        android:id="@+id/tv_local_music_all_songs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/tv_local_music_title"
         android:drawableRight="@mipmap/arrow"
-        android:drawablePadding="5dp"
+        android:drawablePadding="30dp"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_alignBaseline="@+id/tv_local_music_title"
+        android:textSize="15dp"
         android:text="150首"/>
     <ImageButton
         android:id="@+id/ib_start"
@@ -28,21 +30,24 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
         android:background="#B8D5ED"
         android:src="@mipmap/fx_star_itv_home_list_btn"/>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_below="@+id/ib_start"/>
-    <include layout="@layout/image_up_text_down"
+    <include
+        layout="@layout/image_up_text_down"
+        android:id="@+id/image_up_text_down"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ib_start"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="35dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
      />

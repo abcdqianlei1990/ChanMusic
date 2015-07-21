@@ -1,4 +1,4 @@
-package cn.chan.com.myapplication;
+package cn.chan.com.activity;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mIvSee.setOnClickListener(this);
         mIvSing.setOnClickListener(this);
         mIvSetting.setOnClickListener(this);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
     private void initViews() {
         if(mActionBar != null){
