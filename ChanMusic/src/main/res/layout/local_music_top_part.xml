@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:background="@drawable/play_mode_arrow"/>
+                android:background="@mipmap/kg_group_arrow_up"/>
         </LinearLayout>
         <ImageButton
             android:id="@+id/ib_local_music_search"
