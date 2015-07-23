@@ -2,7 +2,9 @@ package cn.chan.com.util;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import cn.chan.com.entity.SongDetailEntity;
  * Created by Administrator on 2015/7/22.
  */
 public class SongScannerImpl implements ISongScanner {
+    private static final String TAG = "SongScannerImpl";
     private Context context;
     private ArrayList<SongDetailEntity> mSongs = new ArrayList<SongDetailEntity>();
 
@@ -35,12 +38,15 @@ public class SongScannerImpl implements ISongScanner {
                     String album = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
                     String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
                     String duration = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
-                    mSongs.add(new SongDetailEntity(title,path,artist,duration,album));
+                    //Uri uri = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI));
+                    Log.d(TAG,title+" | "+path);
+                    mSongs.add(new SongDetailEntity(title, path, artist, duration, album));
                 }
 
 //            }
 //        }).start();
         //Toast.makeText(context,"SCANNER OVER ! count = "+mSongs.size(),Toast.LENGTH_SHORT);
+
         return mSongs;
     }
 }

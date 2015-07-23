@@ -2,17 +2,23 @@ package cn.chan.com.activity;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -46,6 +52,12 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
     private LinearLayout mLayout2;
     private LinearLayout mLayout3;
     private RecyclerView mRecyclerView;
+    private SongsListAdapter mAdapter;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private LinearLayout mDrawer;
+    private Button mScanner;
+    private boolean mDrawerOpened;
     private View mTop;
     private View mBottom;
     private PopupWindow pop;
@@ -81,14 +93,18 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
         mAlbum = (TextView) mTop.findViewById(R.id.album_select);
         mFolder = (TextView) mTop.findViewById(R.id.folder_select);
         mRecyclerView = (RecyclerView) findViewById(R.id.local_music_recycler_view);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(new SongsListAdapter(mSongDetails,this));
+        mAdapter = new SongsListAdapter(mSongDetails, this);
+        mRecyclerView.setAdapter(mAdapter);
         mPlayMode = (ImageView) mTop.findViewById(R.id.iv_player_mode);
         mPlayModeName = (TextView) mTop.findViewById(R.id.tv_player_mode);
         mPlayModeArrow = (ImageView) mTop.findViewById(R.id.iv_player_mode_arrow);
+        mDrawer = (LinearLayout) findViewById(R.id.local_music_drawer);
+        mScanner = (Button) findViewById(R.id.local_music_drawer_scanner);
         sharedPreferences = getSharedPreferences("sp_setting",Activity.MODE_PRIVATE);
         mMode = sharedPreferences.getInt("play_mode",0);
-        mSongDetails.addAll(new SongScannerImpl(this).getAllSongs());
+
         Log.d(TAG,"current count of songs : "+mSongDetails.size());
         //Toast.makeText(this,"current count of songs : "+mSongDetails.size(),Toast.LENGTH_SHORT).show();
     }
@@ -99,6 +115,29 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
         mAlbum.setOnClickListener(this);
         mFolder.setOnClickListener(this);
         mPlayModeArrow.setOnClickListener(this);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                R.mipmap.ic_launcher, R.string.open,
+                R.string.close)
+        {
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view)
+            {
+                mDrawerOpened = false;
+                invalidateOptionsMenu(); // creates call to
+                // onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView)
+            {
+                mDrawerOpened = true;
+                invalidateOptionsMenu(); // creates call to
+                // onPrepareOptionsMenu()
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mScanner.setOnClickListener(this);
     }
 
     public void initViews(){
@@ -200,6 +239,11 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
                 });
                 pop.showAsDropDown(view, 10, 10);
                 break;
+            case R.id.local_music_drawer_scanner:
+                //Toast.makeText(this,"扫描歌曲",Toast.LENGTH_SHORT).show();
+                mSongDetails.addAll(new SongScannerImpl(this).getAllSongs());
+                mAdapter.notifyDataSetChanged();
+                break;
             default:
                 break;
         }
@@ -252,5 +296,38 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
                 pop.dismiss();
             }
         });
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0,1,1,"aaa").setIcon(R.mipmap.skin_image_scan_setting_icon_1).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0,1,1,"bbb").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if(!mDrawerOpened){
+            mDrawerLayout.openDrawer(mDrawer);
+        }else{
+            mDrawerLayout.closeDrawer(mDrawer);
+        }
+
+        // Handle your other action bar items...
+        return super.onOptionsItemSelected(item);
     }
 }
