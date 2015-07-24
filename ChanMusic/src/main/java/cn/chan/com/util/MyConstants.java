@@ -20,4 +20,8 @@ public interface MyConstants {
         public static final int PAUSE = 0X05;
         public static final int STOP = 0X06;
     }
+
+    static class MyAction{
+        public static final String MEDIA_SERVICE = "cn.chan.com.service.MediaPlayService";
+    }
 }

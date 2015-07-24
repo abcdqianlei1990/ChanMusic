@@ -3,9 +3,9 @@ package cn.chan.com.activity;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -19,16 +19,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import cn.chan.com.adapter.SongsListAdapter;
 import cn.chan.com.entity.SongDetailEntity;
@@ -39,8 +39,9 @@ import cn.chan.com.util.SongScannerImpl;
 /**
  * Created by Administrator on 2015/7/21.
  */
-public class LocalMusicActivity extends Activity implements View.OnClickListener{
+public class LocalMusicActivity extends BaseActivity implements View.OnClickListener{
     private static final String TAG = "LocalMusicActivity";
+    private View mParentView;
     private TextView mSong;
     private TextView mSinger;
     private TextView mAlbum;
@@ -67,14 +68,21 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
     private ImageView mPlayModeChecked;
     //某个歌手的所有歌名集合
     private ArrayList<SongDetailEntity> mSongDetails = new ArrayList<SongDetailEntity>();
+    private ImageButton mPlay;
+    private ImageButton mPrevSong;
+    private ImageButton mNextSong;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.local_music);
+        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        mParentView = inflater .inflate(R.layout.local_music,null);
+        setContentView(mParentView);
         initParams();
         initEvents();
         initViews();
+
     }
+
     //test data
     protected void initData()
     {
@@ -103,8 +111,10 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
         mDrawer = (LinearLayout) findViewById(R.id.local_music_drawer);
         mScanner = (Button) findViewById(R.id.local_music_drawer_scanner);
         sharedPreferences = getSharedPreferences("sp_setting",Activity.MODE_PRIVATE);
-        mMode = sharedPreferences.getInt("play_mode",0);
-
+        mMode = sharedPreferences.getInt("play_mode", 0);
+        mPlay = (ImageButton) mBottom.findViewById(R.id.ib_play);
+        mPrevSong = (ImageButton) mBottom.findViewById(R.id.ib_prev);
+        mNextSong = (ImageButton) mBottom.findViewById(R.id.ib_next);
         Log.d(TAG,"current count of songs : "+mSongDetails.size());
         //Toast.makeText(this,"current count of songs : "+mSongDetails.size(),Toast.LENGTH_SHORT).show();
     }
@@ -115,6 +125,9 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
         mAlbum.setOnClickListener(this);
         mFolder.setOnClickListener(this);
         mPlayModeArrow.setOnClickListener(this);
+        mPlay.setOnClickListener(this);
+        mPrevSong.setOnClickListener(this);
+        mNextSong.setOnClickListener(this);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.mipmap.ic_launcher, R.string.open,
                 R.string.close)
@@ -167,6 +180,8 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
     @Override
     protected void onResume() {
         super.onResume();
+        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        //initVideoView(getParent(),inflater.inflate(R.layout.video,null)).showAtLocation(mParentView, Gravity.BOTTOM,0,0);
     }
 
     @Override
@@ -243,6 +258,12 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
                 //Toast.makeText(this,"扫描歌曲",Toast.LENGTH_SHORT).show();
                 mSongDetails.addAll(new SongScannerImpl(this).getAllSongs());
                 mAdapter.notifyDataSetChanged();
+                break;
+            case R.id.ib_play:
+                break;
+            case R.id.ib_prev:
+                break;
+            case R.id.ib_next:
                 break;
             default:
                 break;
@@ -321,6 +342,24 @@ public class LocalMusicActivity extends Activity implements View.OnClickListener
     public boolean onOptionsItemSelected(MenuItem item) {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
+        MediaPlayer mp = new MediaPlayer();
+        String path = "storage/emulated/0/qqmusic/song/aiwojiujiu.mp3";
+        //MediaPlayer mp = MediaPlayer.create(this,R.raw.aaa);
+        File f = new File(path);
+        try {
+            if(f.exists()){
+                mp.setDataSource(path);
+                mp.prepare();
+                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mp.start();
+                Toast.makeText(this,"file is exist !",Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(this,"file not exist ",Toast.LENGTH_LONG).show();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if(!mDrawerOpened){
             mDrawerLayout.openDrawer(mDrawer);
         }else{

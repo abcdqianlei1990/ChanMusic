@@ -19,6 +19,11 @@
             android:label="本地音乐" >
 
         </activity>
+        <service android:name="cn.chan.com.service.MediaPlayService" >
+            <intent-filter >
+                <action android:name="cn.chan.com.service.MediaPlayService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
