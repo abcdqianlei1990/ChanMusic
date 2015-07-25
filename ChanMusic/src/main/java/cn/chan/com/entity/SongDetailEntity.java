@@ -9,13 +9,14 @@ public class SongDetailEntity {
     private String artist;
     private String duration;
     private String album;
-
-    public SongDetailEntity(String title, String path, String artist, String duration, String album) {
+    private int    progress;
+    public SongDetailEntity(String title, String path, String artist, String duration, String album,int progress) {
         this.title = title;
         this.path = path;
         this.artist = artist;
         this.duration = duration;
         this.album = album;
+        this.progress = progress;
     }
 
 
@@ -39,6 +40,10 @@ public class SongDetailEntity {
         return album;
     }
 
+    public int getProgress() {
+        return progress;
+    }
+
     public void setSongName(String title) {
         this.title = title;
     }
@@ -57,5 +62,9 @@ public class SongDetailEntity {
 
     public void setAlbum(String album) {
         this.album = album;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 }

@@ -44,10 +44,12 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
     };
 
     public SongsListAdapter(ArrayList<SongDetailEntity> data,Context context){
+        Log.d(TAG,"Adapter构造方法");
         this.data = data;
         this.context = context;
+        this.service = service;
         Intent intent = new Intent(context,MediaPlayService.class);
-        context.bindService(intent,conn,Context.BIND_AUTO_CREATE);
+        context.bindService(intent, conn, Context.BIND_AUTO_CREATE);
     }
     @Override
     public SongsListItemViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -96,8 +98,11 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
             });
 
         }
-
-
+    }
+    public void onDestroy(){
+        if(service != null){
+            service.unbindService(conn);
+        }
     }
 }
 

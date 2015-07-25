@@ -1,12 +1,17 @@
 package cn.chan.com.activity;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,9 +38,11 @@ import java.util.ArrayList;
 
 import cn.chan.com.adapter.SongsListAdapter;
 import cn.chan.com.entity.SongDetailEntity;
+import cn.chan.com.service.MediaPlayService;
 import cn.chan.com.util.MeasureView;
 import cn.chan.com.util.MyConstants;
 import cn.chan.com.util.SongScannerImpl;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Administrator on 2015/7/21.
@@ -71,15 +79,23 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
     private ImageButton mPlay;
     private ImageButton mPrevSong;
     private ImageButton mNextSong;
+    private TextView mSongTitle;
+    private TextView mArtist;
+    private SeekBar mSeekBar;
+    private EventBus mEventBus;
+    private int mPlayingStatus = MyConstants.MediaStatus.INVALID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
         mParentView = inflater .inflate(R.layout.local_music,null);
         setContentView(mParentView);
+
         initParams();
         initEvents();
         initViews();
+
+
 
     }
 
@@ -89,11 +105,13 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         mSongDetails = new ArrayList<SongDetailEntity>();
         for (int i = 'A'; i < 'z'; i++)
         {
-            mSongDetails.add(new SongDetailEntity((char)i+"",null,"- 张国荣",null,null));
+            mSongDetails.add(new SongDetailEntity((char)i+"",null,"- 张国荣",null,null,0));
         }
     }
     public void initParams(){
         //initData();
+        mEventBus = EventBus.getDefault();
+        mEventBus.register(this);
         mTop = findViewById(R.id.local_music_top_part);
         mBottom = findViewById(R.id.local_music_video);
         mSong = (TextView) mTop.findViewById(R.id.song_select);
@@ -115,6 +133,9 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         mPlay = (ImageButton) mBottom.findViewById(R.id.ib_play);
         mPrevSong = (ImageButton) mBottom.findViewById(R.id.ib_prev);
         mNextSong = (ImageButton) mBottom.findViewById(R.id.ib_next);
+        mSongTitle = (TextView) mBottom.findViewById(R.id.tv_song_name);
+        mArtist = (TextView) mBottom.findViewById(R.id.tv_song_artist);
+        mSeekBar = (SeekBar) mBottom.findViewById(R.id.seekBar);
         Log.d(TAG,"current count of songs : "+mSongDetails.size());
         //Toast.makeText(this,"current count of songs : "+mSongDetails.size(),Toast.LENGTH_SHORT).show();
     }
@@ -202,7 +223,11 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         SharedPreferences.Editor ed = sharedPreferences.edit();
         ed.putInt("play_mode", mMode);
         ed.commit();
-
+        //close service
+        if(mAdapter != null){
+            mAdapter.onDestroy();
+        }
+        mEventBus.unregister(this);
     }
 
     @Override
@@ -342,24 +367,24 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
     public boolean onOptionsItemSelected(MenuItem item) {
         // Pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
-        MediaPlayer mp = new MediaPlayer();
-        String path = "storage/emulated/0/qqmusic/song/aiwojiujiu.mp3";
-        //MediaPlayer mp = MediaPlayer.create(this,R.raw.aaa);
-        File f = new File(path);
-        try {
-            if(f.exists()){
-                mp.setDataSource(path);
-                mp.prepare();
-                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mp.start();
-                Toast.makeText(this,"file is exist !",Toast.LENGTH_LONG).show();
-            }else{
-                Toast.makeText(this,"file not exist ",Toast.LENGTH_LONG).show();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        MediaPlayer mp = new MediaPlayer();
+//        String path = "storage/emulated/0/qqmusic/song/aiwojiujiu.mp3";
+//        //MediaPlayer mp = MediaPlayer.create(this,R.raw.aaa);
+//        File f = new File(path);
+//        try {
+//            if(f.exists()){
+//                mp.setDataSource(path);
+//                mp.prepare();
+//                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//                mp.start();
+//                Toast.makeText(this,"file is exist !",Toast.LENGTH_LONG).show();
+//            }else{
+//                Toast.makeText(this,"file not exist ",Toast.LENGTH_LONG).show();
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         if(!mDrawerOpened){
             mDrawerLayout.openDrawer(mDrawer);
         }else{
@@ -368,5 +393,15 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
 
         // Handle your other action bar items...
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onEventMainThread(SongDetailEntity song){
+        Log.d(TAG,"获得来自于media service的信息，更新歌曲信息,duration:"+song.getDuration());
+        //mSeekBar.setMax(song.getDuration());
+        //将播放状态改为playing
+        mPlayingStatus = MyConstants.MediaStatus.PLAYING;
+
+        mSongTitle.setText(song.getTitle());
+        mArtist.setText(song.getArtist());
     }
 }

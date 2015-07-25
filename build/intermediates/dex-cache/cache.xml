@@ -16,6 +16,13 @@
         <dex dex="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\pre-dexed\debug\support-annotations-22.2.0-ed148b79a2e32691150cd675671d029625c3d8f8.jar" />
     </item>
     <item
+        jar="C:\Users\Administrator.PC-20150629RJAE\.gradle\caches\modules-2\files-2.1\de.greenrobot\eventbus\2.4.0\ddd166d01b3158d1c00576d29f7ed15c030df719\eventbus-2.4.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="ddd166d01b3158d1c00576d29f7ed15c030df719">
+        <dex dex="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\pre-dexed\debug\eventbus-2.4.0-00ff56fc18fcc5ce4dedb96d95ff67a3e63a0c06.jar" />
+    </item>
+    <item
         jar="D:\AndroidStudioProjects\MyMusic\ChanMusic\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\22.2.0\classes.jar"
         jumboMode="false"
         revision="21.1.2"
