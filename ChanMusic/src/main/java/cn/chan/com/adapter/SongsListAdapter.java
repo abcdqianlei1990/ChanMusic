@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -48,7 +49,15 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
         this.data = data;
         this.context = context;
         this.service = service;
+
+    }
+    //将bind service封装成一个方法，这样我们可以在适当的地方去调用
+    //在扫描完成后再进行绑定，这样才会有数据
+    public void bindService(){
         Intent intent = new Intent(context,MediaPlayService.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("all_songs",data);
+        intent.putExtra("data",bundle);
         context.bindService(intent, conn, Context.BIND_AUTO_CREATE);
     }
     @Override
@@ -92,7 +101,7 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
                     }else{
                         Toast.makeText(context,"play current song "+data.get(getLayoutPosition()).getTitle(),Toast.LENGTH_SHORT).show();
                         //play the song
-                        service.play(data.get(getLayoutPosition()));
+                        service.play(data.get(getLayoutPosition()),getLayoutPosition());
                     }
                 }
             });
@@ -101,7 +110,7 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
     }
     public void onDestroy(){
         if(service != null){
-            service.unbindService(conn);
+            context.unbindService(conn);
         }
     }
 }

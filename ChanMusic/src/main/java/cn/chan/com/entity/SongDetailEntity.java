@@ -1,16 +1,20 @@
 package cn.chan.com.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Administrator on 2015/7/22.
  */
-public class SongDetailEntity {
+public class SongDetailEntity implements Parcelable{
     private String title;
     private String path;
     private String artist;
-    private String duration;
+    private int duration;
     private String album;
     private int    progress;
-    public SongDetailEntity(String title, String path, String artist, String duration, String album,int progress) {
+
+    public SongDetailEntity(String title, String path, String artist, int duration, String album,int progress) {
         this.title = title;
         this.path = path;
         this.artist = artist;
@@ -32,7 +36,7 @@ public class SongDetailEntity {
         return artist;
     }
 
-    public String getDuration() {
+    public int getDuration() {
         return duration;
     }
 
@@ -56,7 +60,7 @@ public class SongDetailEntity {
         this.artist = artist;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
@@ -67,4 +71,42 @@ public class SongDetailEntity {
     public void setProgress(int progress) {
         this.progress = progress;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(title);
+        parcel.writeString(path);
+        parcel.writeString(artist);
+        parcel.writeInt(duration);
+        parcel.writeString(album);
+        parcel.writeInt(progress);
+    }
+
+    public SongDetailEntity(Parcel in){
+        //顺序要和writeToParcel写的顺序一样
+        title = in.readString();
+        path = in.readString();
+        artist = in.readString();
+        duration = in.readInt();
+        album = in.readString();
+        progress = in.readInt();
+
+    }
+
+    public static final Creator CREATOR = new Creator<SongDetailEntity>() {
+        @Override
+        public SongDetailEntity createFromParcel(Parcel parcel) {
+            return new SongDetailEntity(parcel);
+        }
+
+        @Override
+        public SongDetailEntity[] newArray(int i) {
+            return new SongDetailEntity[i];
+        }
+    };
 }

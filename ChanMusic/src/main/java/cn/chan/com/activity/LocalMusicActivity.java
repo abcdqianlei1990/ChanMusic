@@ -37,8 +37,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import cn.chan.com.adapter.SongsListAdapter;
+import cn.chan.com.entity.ProgressChangEvent;
 import cn.chan.com.entity.SongDetailEntity;
 import cn.chan.com.service.MediaPlayService;
+import cn.chan.com.util.DataProcess;
 import cn.chan.com.util.MeasureView;
 import cn.chan.com.util.MyConstants;
 import cn.chan.com.util.SongScannerImpl;
@@ -105,7 +107,7 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         mSongDetails = new ArrayList<SongDetailEntity>();
         for (int i = 'A'; i < 'z'; i++)
         {
-            mSongDetails.add(new SongDetailEntity((char)i+"",null,"- 张国荣",null,null,0));
+            mSongDetails.add(new SongDetailEntity((char)i+"",null,"- 张国荣",0,null,0));
         }
     }
     public void initParams(){
@@ -172,6 +174,27 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mScanner.setOnClickListener(this);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                //如果是用户手动调整进度
+                if(b){
+                    //先发送消息到media player，然后讲seekbar调到对应的progress
+                    EventBus.getDefault().post(new ProgressChangEvent(0,i));
+                    seekBar.setProgress(i);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     public void initViews(){
@@ -281,8 +304,12 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.local_music_drawer_scanner:
                 //Toast.makeText(this,"扫描歌曲",Toast.LENGTH_SHORT).show();
+                if(mSongDetails.size() != 0){
+                    mSongDetails.clear();
+                }
                 mSongDetails.addAll(new SongScannerImpl(this).getAllSongs());
                 mAdapter.notifyDataSetChanged();
+                mAdapter.bindService();
                 break;
             case R.id.ib_play:
                 break;
@@ -396,12 +423,22 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
     }
 
     public void onEventMainThread(SongDetailEntity song){
-        Log.d(TAG,"获得来自于media service的信息，更新歌曲信息,duration:"+song.getDuration());
-        //mSeekBar.setMax(song.getDuration());
+
+        //String time = DataProcess.formatToTime(song.getDuration());
+        //Log.d("chan","获得来自于media service的信息，更新歌曲信息,duration:"+song.getDuration()+"时间："+time);
+        mSeekBar.setMax(song.getDuration());
         //将播放状态改为playing
         mPlayingStatus = MyConstants.MediaStatus.PLAYING;
-
+        int progress = song.getProgress();
+        //Log.d("chan","progress = "+progress);
+        if(progress > 0){
+            mSeekBar.setProgress(progress);
+        }
+        mPlay.setImageResource(R.mipmap.statusbar_btn_pause);
+        mPlay.setBaseline(R.id.ib_prev);
         mSongTitle.setText(song.getTitle());
         mArtist.setText(song.getArtist());
+        //mSeekBar.setMax(song.getDuration());
     }
+
 }

@@ -36,11 +36,12 @@ public class SongScannerImpl implements ISongScanner {
                     String title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
                     String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
                     String album = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
-                    String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
-                    String duration = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
+                    String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)).trim().toString();
+                    //String duration = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
                     //Uri uri = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI));
                     Log.d(TAG,title+" | "+path);
-                    mSongs.add(new SongDetailEntity(title, path, artist, duration, album));
+                    //此处歌曲的总长度duration和播放进度，初始化为0
+                    mSongs.add(new SongDetailEntity(title, path, artist, 0, album,0));
                 }
 
 //            }

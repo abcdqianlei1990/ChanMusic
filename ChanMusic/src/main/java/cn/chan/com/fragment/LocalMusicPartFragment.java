@@ -11,11 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.chan.com.activity.LocalMusicActivity;
 import cn.chan.com.activity.R;
+import cn.chan.com.util.MeasureView;
 
 /**
  * Created by Administrator on 2015/7/20.
@@ -28,6 +30,7 @@ public class LocalMusicPartFragment extends Fragment implements View.OnClickList
     private ImageButton mMyList;
     private ImageButton mMyDown;
     private ImageButton mLatestPlay;
+    private LinearLayout mJumpView;
     private View mView;
     private View mImageText;
     private Context mContext;
@@ -89,6 +92,7 @@ public class LocalMusicPartFragment extends Fragment implements View.OnClickList
         mMyDown = (ImageButton) mView.findViewById(R.id.ib_my_download);
         mLatestPlay = (ImageButton) mView.findViewById(R.id.ib_latest_play);
         mImageText =mView.findViewById(R.id.image_up_text_down);
+        mJumpView = (LinearLayout) mView.findViewById(R.id.jump_to_local_music);
         mContext = getActivity();
     }
     public void initEvents(){
@@ -98,14 +102,15 @@ public class LocalMusicPartFragment extends Fragment implements View.OnClickList
         mMyList.setOnClickListener(this);
         mMyDown.setOnClickListener(this);
         mLatestPlay.setOnClickListener(this);
+        mJumpView.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-            case R.id.tv_local_music_all_songs:
+            case R.id.jump_to_local_music:
                 //Toast.makeText(mContext,"all songs clicked...",Toast.LENGTH_SHORT).show();
-                Log.d(TAG,"all songs clicked...");
+                Log.d("chan","all songs clicked...");
                 Intent intent = new Intent(mContext, LocalMusicActivity.class);
                 startActivity(intent);
                 break;
