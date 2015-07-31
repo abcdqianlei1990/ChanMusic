@@ -62,6 +62,12 @@ public class LocalMusicPartFragment extends Fragment implements View.OnClickList
     @Override
     public void onResume() {
         super.onResume();
+        //使linearLayout高度增加10dp
+//        ViewGroup.LayoutParams layoutParams = mJumpView.getLayoutParams();
+//        layoutParams.height += 10;
+//        Log.d("chan","mJumpView的height："+(layoutParams.height+10));
+//        mJumpView.setLayoutParams(layoutParams);
+
     }
 
     @Override
@@ -104,6 +110,7 @@ public class LocalMusicPartFragment extends Fragment implements View.OnClickList
         mLatestPlay.setOnClickListener(this);
         mJumpView.setOnClickListener(this);
     }
+
 
     @Override
     public void onClick(View view) {

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/queue_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="播放队列（150）"
+            android:textSize="20dp"/>
+        <ImageView
+            android:id="@+id/queue_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_player_mode_all_default"
+            />
+        <ImageView
+            android:layout_width="2dp"
+            android:layout_height="15dp"
+            android:background="@android:color/holo_red_light"/>
+        <ImageView
+            android:id="@+id/queue_clean_all"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@android:color/white"
+            android:layout_alignParentRight="true"
+            />
+        </RelativeLayout>
+    <ListView
+        android:id="@+id/queue_lv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

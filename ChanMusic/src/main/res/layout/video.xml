@@ -2,36 +2,33 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <ImageView
+    <!--<ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
+        android:id="@+id/video_albumart"
         android:src="@mipmap/ic_launcher"
-         />
+        android:visibility="gone"
+         />-->
     <SeekBar
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/imageView"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:id="@+id/seekBar"/>
     <TextView
         android:id="@+id/tv_song_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/imageView"
         android:layout_below="@+id/seekBar"
+        android:textColor="@android:color/holo_green_light"
         android:text="我"/>
     <TextView
         android:id="@+id/tv_song_artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/imageView"
         android:layout_below="@+id/tv_song_name"
+        android:textColor="@android:color/holo_green_light"
         android:layout_marginTop="10dp"
         android:text="张国荣"/>
-    <ImageView
+    <!--<ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/iv_device_type"
@@ -39,33 +36,33 @@
         android:layout_toRightOf="@+id/tv_song_artist"
         android:layout_below="@+id/tv_song_name"
         android:src="@mipmap/start"
-        />
+        />-->
+    <LinearLayout
+        android:id="@+id/btn_group"
+        android:layout_below="@+id/seekBar"
+        android:orientation="horizontal"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
     <ImageButton
         android:id="@+id/ib_prev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/statusbar_btn_prev"
-        android:layout_toRightOf="@+id/iv_device_type"
-        android:layout_below="@+id/seekBar"/>
+        android:src="@mipmap/statusbar_btn_prev"/>
     <ImageButton
         android:id="@+id/ib_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/statusbar_btn_play"
-        android:layout_toRightOf="@+id/ib_prev"
-        android:layout_below="@+id/seekBar"/>
+        android:src="@mipmap/statusbar_btn_play"/>
     <ImageButton
         android:id="@+id/ib_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/statusbar_btn_next"
-        android:layout_toRightOf="@+id/ib_play"
-        android:layout_below="@+id/seekBar"/>
+        android:src="@mipmap/statusbar_btn_next"/>
     <ImageButton
         android:id="@+id/ib_play_queue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_player_current_playlist_back"
-        android:layout_toRightOf="@+id/ib_next"
-        android:layout_below="@+id/seekBar"/>
+        android:src="@mipmap/ic_player_current_playlist_back"/>
+    </LinearLayout>
 </RelativeLayout>

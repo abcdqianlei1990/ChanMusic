@@ -5,6 +5,9 @@ package cn.chan.com.util;
  */
 public interface MyConstants {
 
+    static class CommonData{
+        public static final int DEFAULT_VALUE_INTEGER = -1;
+    }
     static class PlayMode{
         public static final int DEFAULT = 0X001;
         public static final int RANDOM = 0X002;
@@ -30,5 +33,14 @@ public interface MyConstants {
     }
     static class MyAction{
         public static final String MEDIA_SERVICE = "cn.chan.com.service.MediaPlayService";
+        public static final String MEDIA_SERVICE_LOCAL_BROADCAST = "cn.chan.com.service.MediaPlayService.MediaPlayerServiceBroadcastRec";
+        public static final String SEEK_BAR_CHANGE_ACTION = "seek_bar_change_action";
+        public static final String PLAY_CLICKED_ACTION = "play_clicked_action";
+        public static final String PREV_CLICKED_ACTION = "prev_clicked_action";
+        public static final String NEXT_CLICKED_ACTION = "next_clicked_action";
+    }
+    static class SharedPreferencesData{
+        public static final String FILE_NAME = "music_setting";
+        public static final String FIELD_NAME_PLAY_MODE = "play_mode";
     }
 }

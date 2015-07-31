@@ -1,0 +1,6 @@
+①点击item中的歌曲信息播放的时候，会触发onComplete事件，并且，在onPrepare事件之前触发，然后在播放结束之后，再正常触发一次该事件。
+正常应该只触发一次onComplete
+②通过线程池开启单线程去监控进度，线程中有调用media player对象。在service销毁的时候，关闭线程池，然后关闭回收media player对象。
+引用media player对象的时候报错IllegalStateException，因为，线程池不论调用shutdown方法还是shutdownNow方法，都不能马上停止正在运行的线程，所以即使
+在shutdown后面release media player对象，也还是会报错，不能保证同步性。
+解决办法：开启普通线程更新进度，handler.postDelay循环线程

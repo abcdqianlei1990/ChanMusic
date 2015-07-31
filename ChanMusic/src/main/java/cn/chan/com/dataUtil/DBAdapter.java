@@ -9,13 +9,10 @@ public class DBAdapter {
     private static SQLiteDatabase db;
     private static DataHelper helper;
 
-    public static SQLiteDatabase getDBinstance() {
+    public static SQLiteDatabase getDBInstance() {
         if(db == null){
-            synchronized (db){
-                if (db == null){
-                    db = helper.getReadableDatabase();
-                }
-            }
+            //helper = new DataHelper()
+            //db = helper.getReadableDatabase();
         }
         return db;
     }

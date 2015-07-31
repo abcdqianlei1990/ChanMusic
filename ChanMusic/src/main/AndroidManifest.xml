@@ -3,6 +3,7 @@
     package="cn.chan.com.activity" >
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
+        android:name=".BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/Widget.AppCompat.ActionBar" >
@@ -24,6 +25,16 @@
                 <action android:name="cn.chan.com.service.MediaPlayService" />
             </intent-filter>
         </service>
+
+        <!-- 本地广播 -->
+        <!--<receiver android:name="cn.chan.com.service.MediaPlayService$MediaPlayerServiceBroadcastRec"
+            android:exported="false">
+            <intent-filter>
+                <action android:name=""
+            </intent-filter>
+
+        </receiver>-->
+
     </application>
 
 </manifest>

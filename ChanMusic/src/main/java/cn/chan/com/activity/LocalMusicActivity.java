@@ -7,19 +7,23 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -30,17 +34,18 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import cn.chan.com.adapter.SongsListAdapter;
-import cn.chan.com.entity.ProgressChangEvent;
+import cn.chan.com.dataUtil.DBAction;
+import cn.chan.com.dataUtil.DBAdapter;
+import cn.chan.com.entity.MyEvent;
 import cn.chan.com.entity.SongDetailEntity;
+import cn.chan.com.entity.VideoViewHolder;
 import cn.chan.com.service.MediaPlayService;
-import cn.chan.com.util.DataProcess;
 import cn.chan.com.util.MeasureView;
 import cn.chan.com.util.MyConstants;
 import cn.chan.com.util.SongScannerImpl;
@@ -51,41 +56,61 @@ import de.greenrobot.event.EventBus;
  */
 public class LocalMusicActivity extends BaseActivity implements View.OnClickListener{
     private static final String TAG = "LocalMusicActivity";
-    private View mParentView;
-    private TextView mSong;
-    private TextView mSinger;
-    private TextView mAlbum;
-    private TextView mFolder;
-    private ImageView mPlayModeArrow;
-    private ImageView mPlayMode;
-    private TextView mPlayModeName;
-    private LinearLayout mLayout1;
-    private LinearLayout mLayout2;
-    private LinearLayout mLayout3;
-    private RecyclerView mRecyclerView;
+    private Context         mContext;
+    private View            mParentView;
+    private TextView        mSong;
+    private TextView        mSinger;
+    private TextView        mAlbum;
+    private TextView        mFolder;
+    private ImageView       mPlayModeArrow;
+    private ImageView       mPlayMode;
+    private TextView        mPlayModeName;
+    private LinearLayout    mLayout1;
+    private LinearLayout    mLayout2;
+    private LinearLayout    mLayout3;
+    private RecyclerView    mRecyclerView;
     private SongsListAdapter mAdapter;
-    private DrawerLayout mDrawerLayout;
+    private DrawerLayout    mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private LinearLayout mDrawer;
-    private Button mScanner;
-    private boolean mDrawerOpened;
-    private View mTop;
-    private View mBottom;
-    private PopupWindow pop;
+    private LinearLayout    mDrawer;
+    private Button          mScanner;
+    private boolean        mDrawerOpened;
+    private View            mTop;
+    private View            mBottom;
+    private PopupWindow     pop;
     private SharedPreferences sharedPreferences;
-    private int mMode;
+    private int             mMode;
     private boolean mBackgroundChange = false;
-    private ImageView mPlayModeChecked;
+    private ImageView       mPlayModeChecked;
     //某个歌手的所有歌名集合
     private ArrayList<SongDetailEntity> mSongDetails = new ArrayList<SongDetailEntity>();
-    private ImageButton mPlay;
-    private ImageButton mPrevSong;
-    private ImageButton mNextSong;
-    private TextView mSongTitle;
-    private TextView mArtist;
-    private SeekBar mSeekBar;
-    private EventBus mEventBus;
-    private int mPlayingStatus = MyConstants.MediaStatus.INVALID;
+    private ImageButton     mPlay;
+    private ImageButton     mPrevSong;
+    private ImageButton     mNextSong;
+    private ImageButton     mPlayingQueue;
+    private ImageView       mAlbumart;
+    private TextView        mSongTitle;
+    private TextView        mArtist;
+    private SeekBar         mSeekBar;
+    private EventBus        mEventBus;
+    private DBAction        mDBAction;
+    int temp;
+    private static MediaPlayService service;
+    ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(TAG,"media play service is binded.");
+            MediaPlayService.MyBinder binder = (MediaPlayService.MyBinder)iBinder;
+            service = binder.getService();
+            adapterData();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,22 +121,12 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         initParams();
         initEvents();
         initViews();
-
-
-
+        bindService();
     }
 
-    //test data
-    protected void initData()
-    {
-        mSongDetails = new ArrayList<SongDetailEntity>();
-        for (int i = 'A'; i < 'z'; i++)
-        {
-            mSongDetails.add(new SongDetailEntity((char)i+"",null,"- 张国荣",0,null,0));
-        }
-    }
     public void initParams(){
         //initData();
+        mContext = this;
         mEventBus = EventBus.getDefault();
         mEventBus.register(this);
         mTop = findViewById(R.id.local_music_top_part);
@@ -123,25 +138,36 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         mRecyclerView = (RecyclerView) findViewById(R.id.local_music_recycler_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new SongsListAdapter(mSongDetails, this);
-        mRecyclerView.setAdapter(mAdapter);
+        mDBAction = new DBAction(this);
         mPlayMode = (ImageView) mTop.findViewById(R.id.iv_player_mode);
         mPlayModeName = (TextView) mTop.findViewById(R.id.tv_player_mode);
         mPlayModeArrow = (ImageView) mTop.findViewById(R.id.iv_player_mode_arrow);
         mDrawer = (LinearLayout) findViewById(R.id.local_music_drawer);
         mScanner = (Button) findViewById(R.id.local_music_drawer_scanner);
-        sharedPreferences = getSharedPreferences("sp_setting",Activity.MODE_PRIVATE);
-        mMode = sharedPreferences.getInt("play_mode", 0);
+        sharedPreferences = getSharedPreferences(MyConstants.SharedPreferencesData.FILE_NAME,Activity.MODE_PRIVATE);
+        mMode = sharedPreferences.getInt(MyConstants.SharedPreferencesData.FIELD_NAME_PLAY_MODE, 0);
         mPlay = (ImageButton) mBottom.findViewById(R.id.ib_play);
         mPrevSong = (ImageButton) mBottom.findViewById(R.id.ib_prev);
         mNextSong = (ImageButton) mBottom.findViewById(R.id.ib_next);
+        mPlayingQueue = (ImageButton) mBottom.findViewById(R.id.ib_play_queue);
         mSongTitle = (TextView) mBottom.findViewById(R.id.tv_song_name);
+        //mAlbumart = (ImageView) mBottom.findViewById(R.id.video_albumart);
         mArtist = (TextView) mBottom.findViewById(R.id.tv_song_artist);
         mSeekBar = (SeekBar) mBottom.findViewById(R.id.seekBar);
         Log.d(TAG,"current count of songs : "+mSongDetails.size());
-        //Toast.makeText(this,"current count of songs : "+mSongDetails.size(),Toast.LENGTH_SHORT).show();
     }
 
+    public void adapterData(){
+        if(service == null){
+            Log.d("chan","service 为空");
+        }
+
+        mAdapter = new SongsListAdapter(this,service,mAlbumart);
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+        BaseApplication app = (BaseApplication) getApplication();
+        ArrayList<SongDetailEntity> allData = app.getAllData();
+    }
     public void initEvents(){
         mSong.setOnClickListener(this);
         mSinger.setOnClickListener(this);
@@ -151,6 +177,7 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         mPlay.setOnClickListener(this);
         mPrevSong.setOnClickListener(this);
         mNextSong.setOnClickListener(this);
+        mPlayingQueue.setOnClickListener(this);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.mipmap.ic_launcher, R.string.open,
                 R.string.close)
@@ -174,14 +201,14 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         mScanner.setOnClickListener(this);
+
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 //如果是用户手动调整进度
                 if(b){
-                    //先发送消息到media player，然后讲seekbar调到对应的progress
-                    EventBus.getDefault().post(new ProgressChangEvent(0,i));
-                    seekBar.setProgress(i);
+                    //Log.d("chan","手动滑动seek bar到"+i+"位置");
+                    temp = i;
                 }
             }
 
@@ -192,9 +219,30 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                Log.d("chan","得到最终的拖动progress temp："+temp);
+                sendLocalBroadcast(MyConstants.MyAction.SEEK_BAR_CHANGE_ACTION);
+                seekBar.setProgress(temp);
             }
         });
+    }
+
+    /**
+     * 发送本地广播事件，在media player service中处理
+     * @param action
+     */
+    private void sendLocalBroadcast(String action) {
+        Intent intent = new Intent(action);
+        if(MyConstants.MyAction.SEEK_BAR_CHANGE_ACTION.equals(action)){
+            intent.putExtra("progress_by_user", temp);
+            intent.putExtra("seek_bar_max",mSeekBar.getMax());
+        }else if(MyConstants.MyAction.PLAY_CLICKED_ACTION.equals(action)){
+            //do nothing
+        }else if(MyConstants.MyAction.PREV_CLICKED_ACTION.equals(action)){
+
+        }else if(MyConstants.MyAction.NEXT_CLICKED_ACTION.equals(action)){
+
+        }
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }
 
     public void initViews(){
@@ -224,8 +272,7 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void onResume() {
         super.onResume();
-        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
-        //initVideoView(getParent(),inflater.inflate(R.layout.video,null)).showAtLocation(mParentView, Gravity.BOTTOM,0,0);
+
     }
 
     @Override
@@ -243,12 +290,10 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         super.onDestroy();
         //save data
         Log.d(TAG,"SAVE PLAY MODE ...");
-        SharedPreferences.Editor ed = sharedPreferences.edit();
-        ed.putInt("play_mode", mMode);
-        ed.commit();
+
         //close service
-        if(mAdapter != null){
-            mAdapter.onDestroy();
+        if(service != null){
+            unbindService(conn);
         }
         mEventBus.unregister(this);
     }
@@ -305,21 +350,62 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
             case R.id.local_music_drawer_scanner:
                 //Toast.makeText(this,"扫描歌曲",Toast.LENGTH_SHORT).show();
                 if(mSongDetails.size() != 0){
+                    Log.d("chan","扫描时:mSongDetails先清空，size="+mSongDetails.size());
                     mSongDetails.clear();
                 }
                 mSongDetails.addAll(new SongScannerImpl(this).getAllSongs());
-                mAdapter.notifyDataSetChanged();
-                mAdapter.bindService();
+                Log.d("chan","扫描结束,成功扫描到 "+mSongDetails.size()+" 条数据");
+                updateData(mSongDetails);
+                //插入数据库
+                mDBAction.resetTable();
+                mDBAction.addSongs(mSongDetails);
+                //将数据传送到service
+                mEventBus.post(new MyEvent(-1,-1,true,null));
+                adapterData();
                 break;
             case R.id.ib_play:
+                //如果正在播放，则暂停，反之.
+                //更改状态
+                BaseApplication app = (BaseApplication)getApplication();
+                int status  = app.getPLAYING_STATUS();
+                if(status == MyConstants.MediaStatus.PLAYING){
+                    mPlay.setImageResource(R.mipmap.statusbar_btn_play);
+                    mPlay.setBaseline(R.id.ib_prev);
+                    app.setPLAYING_STATUS(MyConstants.MediaStatus.PAUSE);
+                }else if(status == MyConstants.MediaStatus.PAUSE){
+                    mPlay.setImageResource(R.mipmap.statusbar_btn_pause);
+                    mPlay.setBaseline(R.id.ib_prev);
+                    app.setPLAYING_STATUS(MyConstants.MediaStatus.PLAYING);
+                }
+                sendLocalBroadcast(MyConstants.MyAction.PLAY_CLICKED_ACTION);
                 break;
             case R.id.ib_prev:
+                sendLocalBroadcast(MyConstants.MyAction.PREV_CLICKED_ACTION);
                 break;
             case R.id.ib_next:
+                sendLocalBroadcast(MyConstants.MyAction.NEXT_CLICKED_ACTION);
+                break;
+            case R.id.ib_play_queue:
+                //弹出popwindow 显示播放队列
+                Log.d("chan","play queue clicked ... ");
+                showPlayingQueueWindow();
                 break;
             default:
                 break;
         }
+    }
+
+    /**
+     * 弹出window，显示播放队列
+     */
+    private void showPlayingQueueWindow() {
+        PopupWindow window = new PopupWindow();
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.pop_playing_queue,null,false);
+        window.setContentView(view);
+        window.isOutsideTouchable();
+        //window.showAtLocation(mBottom, Gravity.TOP,0,0);
+        window.showAsDropDown(mBottom);
     }
 
     public void initPopViews(View v){
@@ -349,6 +435,7 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
                 mPlayModeName.setText("顺序播放");
                 mMode = MyConstants.PlayMode.DEFAULT;
                 pop.dismiss();
+                saveMode();
             }
         });
         mLayout2.setOnClickListener(new View.OnClickListener() {
@@ -358,6 +445,7 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
                 mPlayModeName.setText("随机播放");
                 mMode = MyConstants.PlayMode.RANDOM;
                 pop.dismiss();
+                saveMode();
             }
         });
         mLayout3.setOnClickListener(new View.OnClickListener() {
@@ -367,6 +455,7 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
                 mPlayModeName.setText("单曲循环");
                 mMode = MyConstants.PlayMode.SIGNAL;
                 pop.dismiss();
+                saveMode();
             }
         });
     }
@@ -383,6 +472,12 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         mDrawerToggle.syncState();
     }
 
+    //保存播放模式
+    public void saveMode(){
+        SharedPreferences.Editor ed = sharedPreferences.edit();
+        ed.putInt(MyConstants.SharedPreferencesData.FIELD_NAME_PLAY_MODE, mMode);
+        ed.commit();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0,1,1,"aaa").setIcon(R.mipmap.skin_image_scan_setting_icon_1).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
@@ -392,26 +487,6 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Pass the event to ActionBarDrawerToggle, if it returns
-        // true, then it has handled the app icon touch event
-//        MediaPlayer mp = new MediaPlayer();
-//        String path = "storage/emulated/0/qqmusic/song/aiwojiujiu.mp3";
-//        //MediaPlayer mp = MediaPlayer.create(this,R.raw.aaa);
-//        File f = new File(path);
-//        try {
-//            if(f.exists()){
-//                mp.setDataSource(path);
-//                mp.prepare();
-//                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//                mp.start();
-//                Toast.makeText(this,"file is exist !",Toast.LENGTH_LONG).show();
-//            }else{
-//                Toast.makeText(this,"file not exist ",Toast.LENGTH_LONG).show();
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         if(!mDrawerOpened){
             mDrawerLayout.openDrawer(mDrawer);
         }else{
@@ -422,23 +497,54 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
         return super.onOptionsItemSelected(item);
     }
 
-    public void onEventMainThread(SongDetailEntity song){
+    public void onEventMainThread(MyEvent event){
 
         //String time = DataProcess.formatToTime(song.getDuration());
-        //Log.d("chan","获得来自于media service的信息，更新歌曲信息,duration:"+song.getDuration()+"时间："+time);
-        mSeekBar.setMax(song.getDuration());
-        //将播放状态改为playing
-        mPlayingStatus = MyConstants.MediaStatus.PLAYING;
-        int progress = song.getProgress();
-        //Log.d("chan","progress = "+progress);
-        if(progress > 0){
-            mSeekBar.setProgress(progress);
+
+        int duration = event.getDuration();
+        int progress = event.getProgress();
+        SongDetailEntity song = event.getSong();
+
+        if(progress != -1){
+            //Log.d("chan","progress = "+progress);
+            mSeekBar.setProgress(progress * mSeekBar.getMax() / duration);
         }
-        mPlay.setImageResource(R.mipmap.statusbar_btn_pause);
-        mPlay.setBaseline(R.id.ib_prev);
-        mSongTitle.setText(song.getTitle());
-        mArtist.setText(song.getArtist());
-        //mSeekBar.setMax(song.getDuration());
+        if(song != null){
+            Log.d("chan","获得来自于media service的信息，更新歌曲信息,:"+song.getTitle());
+            mPlay.setImageResource(R.mipmap.statusbar_btn_pause);
+            mPlay.setBaseline(R.id.ib_prev);
+            mSongTitle.setText(song.getTitle());
+            mArtist.setText(song.getArtist());
+        }
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                Log.d("chan","local activity ACTION_DOWN ");
+            break;
+            case MotionEvent.ACTION_UP:
+                Log.d("chan","local activity ACTION_UP ");
+            break;
+        }
+        return super.onTouchEvent(event);
+    }
+    //将bind service封装成一个方法，这样我们可以在适当的地方去调用
+    //在扫描完成后再进行绑定，这样才会有数据
+    public void bindService(){
+        Intent intent = new Intent(this,MediaPlayService.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelableArrayList("all_songs",mSongDetails);
+//        intent.putExtra("data",bundle);
+
+        this.bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    }
+
+    //扫描后更新内存中数据
+    public void updateData(ArrayList<SongDetailEntity> list){
+        BaseApplication app = (BaseApplication) getApplication();
+        app.setAllData(list);
+        //Log.d("chan","更新内存中的数据");
+    }
 }

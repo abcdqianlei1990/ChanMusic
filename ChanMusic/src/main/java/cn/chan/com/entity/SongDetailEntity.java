@@ -1,5 +1,6 @@
 package cn.chan.com.entity;
 
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,14 +14,15 @@ public class SongDetailEntity implements Parcelable{
     private int duration;
     private String album;
     private int    progress;
-
-    public SongDetailEntity(String title, String path, String artist, int duration, String album,int progress) {
+    private byte [] bmp;    //icon
+    public SongDetailEntity(String title, String path, String artist, int duration, String album,int progress,byte [] bmp) {
         this.title = title;
         this.path = path;
         this.artist = artist;
         this.duration = duration;
         this.album = album;
         this.progress = progress;
+        this.bmp = bmp;
     }
 
 
@@ -85,6 +87,7 @@ public class SongDetailEntity implements Parcelable{
         parcel.writeInt(duration);
         parcel.writeString(album);
         parcel.writeInt(progress);
+        //parcel.writeByteArray(bmp);
     }
 
     public SongDetailEntity(Parcel in){
@@ -95,7 +98,7 @@ public class SongDetailEntity implements Parcelable{
         duration = in.readInt();
         album = in.readString();
         progress = in.readInt();
-
+        //in.readByteArray(bmp);
     }
 
     public static final Creator CREATOR = new Creator<SongDetailEntity>() {
@@ -109,4 +112,12 @@ public class SongDetailEntity implements Parcelable{
             return new SongDetailEntity[i];
         }
     };
+
+    public byte [] getBmp() {
+        return bmp;
+    }
+
+    public void setBmp(byte [] bmp) {
+        this.bmp = bmp;
+    }
 }

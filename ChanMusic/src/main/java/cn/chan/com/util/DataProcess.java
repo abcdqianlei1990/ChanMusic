@@ -2,6 +2,9 @@ package cn.chan.com.util;
 
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Random;
+
 /**
  * Created by Administrator on 2015/7/27.
  */
@@ -20,7 +23,11 @@ public class DataProcess {
     }
 
     public static String formatPath(String path){
-
         return path.trim();
+    }
+
+    public static int getRandomIntegerData(int size){
+        int ret = (int)(Math.random()*size);
+        return ret;
     }
 }

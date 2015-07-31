@@ -20,7 +20,7 @@ public class DBAction {
     private Context mContext;
     public DBAction(Context mContext){
         this.mContext = mContext;
-        mDB = DBAdapter.getDBinstance();
+        mDB = new DataHelper(mContext).getReadableDatabase();
     }
 
     public void addSongs(ArrayList<SongDetailEntity> songs){
@@ -33,9 +33,12 @@ public class DBAction {
             values.put("path",songs.get(i).getPath());
             values.put("album",songs.get(i).getAlbum());
             values.put("duration",songs.get(i).getDuration());
+            values.put("progress",songs.get(i).getProgress());
+            values.put("bitmap","");
             ret = mDB.insert(MyConstants.DataBase.TABLE_NAME,null,values);
             Log.d(TAG,"addSongs -> 当前插入一条数据的结果 :"+ret);
         }
+        Log.d("chan","addSongs success !");
     }
 
     public void insertSong(SongDetailEntity song){
@@ -47,6 +50,8 @@ public class DBAction {
         values.put("path",song.getPath());
         values.put("album",song.getAlbum());
         values.put("duration",song.getDuration());
+        values.put("progress",song.getProgress());
+        values.put("bitmap","");
         ret = mDB.insert(MyConstants.DataBase.TABLE_NAME,null,values);
         Log.d(TAG,"insertSong -> 当前插入一条数据的结果 :"+ret);
     }
@@ -63,5 +68,25 @@ public class DBAction {
         }else{
             Log.d(TAG,"querySong -> find nothing ! ");
         }
+    }
+
+    public ArrayList<SongDetailEntity> querySongs(){
+        ArrayList<SongDetailEntity> list = new ArrayList<SongDetailEntity>();
+        Cursor c = mDB.query(MyConstants.DataBase.TABLE_NAME,null,null,null,null,null,null);
+        while(c.moveToNext()){
+            String title = c.getString(c.getColumnIndex("title"));
+            String path = c.getString(c.getColumnIndex("path"));
+            String artist = c.getString(c.getColumnIndex("artist"));
+            int duration = c.getInt(c.getColumnIndex("duration"));
+            String album = c.getString(c.getColumnIndex("album"));
+            int progress = c.getInt(c.getColumnIndex("progress"));
+            String array = c.getString(c.getColumnIndex("bitmap"));
+            list.add(new SongDetailEntity(title,path,artist,duration,album,progress,null));
+        }
+        return list;
+    }
+
+    public void resetTable() {
+        mDB.delete(MyConstants.DataBase.TABLE_NAME,null,null);
     }
 }

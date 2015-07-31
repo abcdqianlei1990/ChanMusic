@@ -1,5 +1,7 @@
 package cn.chan.com.util;
 
+import android.graphics.Bitmap;
+
 import java.util.List;
 
 import cn.chan.com.entity.SongDetailEntity;
@@ -9,4 +11,5 @@ import cn.chan.com.entity.SongDetailEntity;
  */
 public interface ISongScanner {
     public  List<SongDetailEntity> getAllSongs();
+    public Bitmap getAlbumBitmap();
 }
