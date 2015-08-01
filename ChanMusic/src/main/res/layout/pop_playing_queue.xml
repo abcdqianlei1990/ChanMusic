@@ -4,34 +4,50 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_light">
         <TextView
             android:id="@+id/queue_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="播放队列（150）"
+            android:textColor="@android:color/black"
+            android:layout_alignBaseline="@+id/queue_mode"
+            android:paddingLeft="20dp"
             android:textSize="20dp"/>
         <ImageView
             android:id="@+id/queue_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_player_mode_all_default"
-            />
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="46dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/queue_line"
+            android:layout_toStartOf="@+id/queue_line" />
         <ImageView
+            android:id="@+id/queue_line"
             android:layout_width="2dp"
-            android:layout_height="15dp"
-            android:background="@android:color/holo_red_light"/>
-        <ImageView
-            android:id="@+id/queue_clean_all"
-            android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@android:color/white"
+            android:layout_marginRight="15dp"
+            android:background="@android:color/black"
+            android:layout_alignBaseline="@+id/queue_mode"
+            android:layout_toLeftOf="@+id/queue_delete_all"
+            android:layout_toStartOf="@+id/queue_delete_all" />
+        <ImageButton
+            android:id="@+id/queue_delete_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/ic_player_playlist_delete"
             android:layout_alignParentRight="true"
+            android:layout_marginLeft="20dp"
+            android:paddingRight="20dp"
             />
         </RelativeLayout>
     <ListView
+        android:background="@android:color/holo_blue_light"
         android:id="@+id/queue_lv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="200dp"/>
 
 </LinearLayout>

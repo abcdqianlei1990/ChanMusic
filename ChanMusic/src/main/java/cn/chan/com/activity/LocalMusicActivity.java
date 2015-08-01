@@ -40,6 +40,7 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 import cn.chan.com.adapter.SongsListAdapter;
+import cn.chan.com.custormView.POPPlayingQueue;
 import cn.chan.com.dataUtil.DBAction;
 import cn.chan.com.dataUtil.DBAdapter;
 import cn.chan.com.entity.MyEvent;
@@ -399,13 +400,7 @@ public class LocalMusicActivity extends BaseActivity implements View.OnClickList
      * 弹出window，显示播放队列
      */
     private void showPlayingQueueWindow() {
-        PopupWindow window = new PopupWindow();
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.pop_playing_queue,null,false);
-        window.setContentView(view);
-        window.isOutsideTouchable();
-        //window.showAtLocation(mBottom, Gravity.TOP,0,0);
-        window.showAsDropDown(mBottom);
+          new POPPlayingQueue(this).showAtLocation(mParentView,mBottom);
     }
 
     public void initPopViews(View v){
