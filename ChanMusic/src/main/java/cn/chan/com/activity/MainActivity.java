@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 
 
-public class MainActivity extends Activity implements View.OnClickListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener{
     private ActionBar mActionBar;
     private Context mContext;
     private ImageView mIvListen;
@@ -25,14 +25,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        initParams();
-        initViews();
-        initEvents();
+        //setContentView(R.layout.activity_main);
+        setSubContentView(R.layout.activity_main);
+        //initMainActivityParams();
+        //initMainActivityViews();
+        //initMainActivityEvents();
     }
 
-    private void initParams() {
+    private void initMainActivityParams() {
         mContext = this;
         mActionBar = getActionBar();
         mCustomView = LayoutInflater.from(mContext).inflate(R.layout.header,null);
@@ -41,7 +41,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mIvSing = (ImageView) mCustomView.findViewById(R.id.header_iv_4);
         mIvSetting = (ImageView) mCustomView.findViewById(R.id.header_iv_5);
     }
-    private void initEvents() {
+    private void initMainActivityEvents() {
         mIvListen.setOnClickListener(this);
         mIvSee.setOnClickListener(this);
         mIvSing.setOnClickListener(this);
@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
-    private void initViews() {
+    private void initMainActivityViews() {
         if(mActionBar != null){
             mActionBar.setDisplayShowCustomEnabled(true);
             mActionBar.setCustomView(mCustomView);

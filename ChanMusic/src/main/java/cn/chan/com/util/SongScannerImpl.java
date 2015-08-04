@@ -49,7 +49,7 @@ public class SongScannerImpl implements ISongScanner {
                     //Uri uri = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI));
                     //Log.d(TAG,title+" | "+path);
                     //此处歌曲的总长度duration和播放进度，初始化为0
-                    mSongs.add(new SongDetailEntity(title, path, artist, 0, album,0,null));
+                    mSongs.add(new SongDetailEntity(title, path, artist, 0, album,0,null,0,0));
                     int albumid = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
                     //mSongs.add(new SongDetailEntity(title, path, artist, 0, album,0,getArtwork(context,1,albumid,false,false)));
                     //Log.d("chan","getAllSongs --> getImage(cursor).length = "+getImage(cursor).length);

@@ -35,8 +35,10 @@ public class DBAction {
             values.put("duration",songs.get(i).getDuration());
             values.put("progress",songs.get(i).getProgress());
             values.put("bitmap","");
+            values.put("favor",songs.get(i).getFavor());
+            values.put("inQueue",songs.get(i).getInQueue());
             ret = mDB.insert(MyConstants.DataBase.TABLE_NAME,null,values);
-            Log.d(TAG,"addSongs -> 当前插入一条数据的结果 :"+ret);
+            Log.d("chan","addSongs -> 当前插入一条数据的结果 :"+ret);
         }
         Log.d("chan","addSongs success !");
     }
@@ -52,6 +54,8 @@ public class DBAction {
         values.put("duration",song.getDuration());
         values.put("progress",song.getProgress());
         values.put("bitmap","");
+        values.put("favor",song.getFavor());
+        values.put("inQueue",song.getInQueue());
         ret = mDB.insert(MyConstants.DataBase.TABLE_NAME,null,values);
         Log.d(TAG,"insertSong -> 当前插入一条数据的结果 :"+ret);
     }
@@ -81,12 +85,15 @@ public class DBAction {
             String album = c.getString(c.getColumnIndex("album"));
             int progress = c.getInt(c.getColumnIndex("progress"));
             String array = c.getString(c.getColumnIndex("bitmap"));
-            list.add(new SongDetailEntity(title,path,artist,duration,album,progress,null));
+            int favor = c.getInt(c.getColumnIndex("favor"));
+            int inQueue = c.getInt(c.getColumnIndex("inQueue"));
+            list.add(new SongDetailEntity(title,path,artist,duration,album,progress,null,favor,inQueue));
         }
         return list;
     }
 
     public void resetTable() {
-        mDB.delete(MyConstants.DataBase.TABLE_NAME,null,null);
+        int ret = mDB.delete(MyConstants.DataBase.TABLE_NAME,null,null);
+        Log.d("chan","成功删除"+ret+"条数据。");
     }
 }

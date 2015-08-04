@@ -8,14 +8,16 @@ import android.os.Parcelable;
  * Created by Administrator on 2015/7/22.
  */
 public class SongDetailEntity implements Parcelable{
-    private String title;
-    private String path;
-    private String artist;
-    private int duration;
-    private String album;
-    private int    progress;
+    private String  title;
+    private String  path;
+    private String  artist;
+    private int     duration;
+    private String  album;
+    private int     progress;
     private byte [] bmp;    //icon
-    public SongDetailEntity(String title, String path, String artist, int duration, String album,int progress,byte [] bmp) {
+    private int     favor;  //1:true 0:false
+    private int     inQueue; //1:true 0:false
+    public SongDetailEntity(String title, String path, String artist, int duration, String album,int progress,byte [] bmp,int favor,int inQueue) {
         this.title = title;
         this.path = path;
         this.artist = artist;
@@ -23,6 +25,8 @@ public class SongDetailEntity implements Parcelable{
         this.album = album;
         this.progress = progress;
         this.bmp = bmp;
+        this.favor = favor;
+        this.inQueue = inQueue;
     }
 
 
@@ -74,6 +78,21 @@ public class SongDetailEntity implements Parcelable{
         this.progress = progress;
     }
 
+    public int getFavor() {
+        return favor;
+    }
+
+    public void setFavor(int favor) {
+        this.favor = favor;
+    }
+
+    public int getInQueue() {
+        return inQueue;
+    }
+
+    public void setInQueue(int inQueue) {
+        this.inQueue = inQueue;
+    }
     @Override
     public int describeContents() {
         return 0;
@@ -87,6 +106,8 @@ public class SongDetailEntity implements Parcelable{
         parcel.writeInt(duration);
         parcel.writeString(album);
         parcel.writeInt(progress);
+        parcel.writeInt(favor);
+        parcel.writeInt(inQueue);
         //parcel.writeByteArray(bmp);
     }
 
@@ -98,6 +119,8 @@ public class SongDetailEntity implements Parcelable{
         duration = in.readInt();
         album = in.readString();
         progress = in.readInt();
+        favor = in.readInt();
+        inQueue = in.readInt();
         //in.readByteArray(bmp);
     }
 

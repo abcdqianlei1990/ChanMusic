@@ -11,9 +11,9 @@ import cn.chan.com.util.MyConstants;
  * Created by Administrator on 2015/7/22.
  */
 public class DataHelper extends SQLiteOpenHelper {
-    private static final int VERSION = 1;
+    private static final int VERSION = 3;
     private String song_t = "create table if not exists "+ MyConstants.DataBase.TABLE_NAME+"(_id integer primary key autoincrement,title text,path text,artist " +
-            "text,album text,duration integer,progress integer,bitmap text) ";
+            "text,album text,duration integer,progress integer,bitmap text,favor integer,inQueue integer) ";
 
     public DataHelper(Context context){
         super(context,MyConstants.DataBase.DATABASE_NAME,null,VERSION);

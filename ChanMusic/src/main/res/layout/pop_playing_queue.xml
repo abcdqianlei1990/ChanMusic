@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:background="@android:color/black"
+    android:alpha="0.8"
     android:layout_width="match_parent" android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/holo_blue_light">
+        >
         <TextView
             android:id="@+id/queue_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="播放队列（150）"
-            android:textColor="@android:color/black"
+            android:textColor="#ABCDE9"
             android:layout_alignBaseline="@+id/queue_mode"
             android:paddingLeft="20dp"
             android:textSize="20dp"/>
@@ -38,14 +40,13 @@
             android:id="@+id/queue_delete_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@mipmap/ic_player_playlist_delete"
+            android:src="@mipmap/ic_player_playlist_delete"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="20dp"
             android:paddingRight="20dp"
             />
         </RelativeLayout>
     <ListView
-        android:background="@android:color/holo_blue_light"
         android:id="@+id/queue_lv"
         android:layout_width="match_parent"
         android:layout_height="200dp"/>

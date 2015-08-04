@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#B8D5ED"
+
     android:layout_width="wrap_content" android:layout_height="wrap_content">
 
     <ImageButton
@@ -9,7 +9,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_widthPercent="25%"
-        android:background="#B8D5ED"
         android:src="@mipmap/bg_img_audio_unlike"/>
     <TextView
         android:id="@+id/tv1"
@@ -27,7 +26,6 @@
         android:layout_height="wrap_content"
         app:layout_widthPercent="25%"
         android:layout_toRightOf="@+id/ib_my_like"
-        android:background="#B8D5ED"
         android:src="@mipmap/song_list"/>
     <TextView
         android:id="@+id/tv2"
@@ -46,7 +44,6 @@
         android:layout_height="wrap_content"
         app:layout_widthPercent="25%"
         android:layout_toRightOf="@+id/ib_my_list"
-        android:background="#B8D5ED"
         android:src="@mipmap/ktv_dynamic_comment_more_drawable"/>
     <TextView
         android:id="@+id/tv3"
@@ -65,7 +62,6 @@
         android:layout_height="wrap_content"
         app:layout_widthPercent="25%"
         android:layout_toRightOf="@+id/ib_my_download"
-        android:background="#B8D5ED"
         android:src="@mipmap/latest_song"/>
     <TextView
         android:id="@+id/tv4"

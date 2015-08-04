@@ -45,8 +45,9 @@ public class MediaPlayService extends Service{
     BaseApplication mApplication;
     private SongDetailEntity mSong;
     private EventBus mBus;
-    private  ArrayList<SongDetailEntity> data = new ArrayList<SongDetailEntity>();
-    private int currentPos = -1;    //index
+    private  ArrayList<SongDetailEntity> mQueue = new ArrayList<SongDetailEntity>();
+    private int currentPos = -1;    //index 歌曲在recycler view中的位置
+    private int mPos = -1;          //歌曲在播放队列中的位置
     private int mCurrentProgress;
     private LocalBroadcastManager mLocalBroadcastManager;
     private MediaPlayerServiceBroadcastRec mReceiver;
@@ -95,11 +96,10 @@ public class MediaPlayService extends Service{
         timer = new Timer(true);
 //        mProgressMonitor = new ProgressMonitor();
         mApplication = (BaseApplication) getApplication();
-        data = mApplication.getAllData();
-        Log.d("chan","service create 时候获取内存中数据："+data.size());
+        mQueue = mApplication.getPlayingQueue();
+        Log.d("chan", "service create 时候获取内存中数据：" + mQueue.size());
         mediaPlayer = new MediaPlayer();
         mBus = EventBus.getDefault();
-        mBus.register(this);
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         mReceiver = new MediaPlayerServiceBroadcastRec();
 
@@ -126,22 +126,23 @@ public class MediaPlayService extends Service{
                     switch(mode){
                         case MyConstants.PlayMode.DEFAULT:
                             Log.d("chan","播放完成后，当前模式为默认播放模式");
-                            if(currentPos < data.size()){
-                                play(data.get(currentPos+1),currentPos+1,System.currentTimeMillis());
+                            int s = mQueue.size();
+                            if(currentPos < s-1){
+                                play(currentPos+1);
                             }else{
                                 //如果当前播放的是最后一首，那么结束后播放第一首
-                                play(data.get(0),0,System.currentTimeMillis());
+                                play(0);
                             }
                             break;
                         case MyConstants.PlayMode.SIGNAL:
                             Log.d("chan","播放完成后，当前模式为单曲循环播放模式");
-                            play(data.get(currentPos),currentPos,System.currentTimeMillis());
+                            play(currentPos);
                             break;
                         case MyConstants.PlayMode.RANDOM:
 
-                           currentPos = DataProcess.getRandomIntegerData(data.size());
+                           currentPos = DataProcess.getRandomIntegerData(mQueue.size());
                             Log.d("chan","播放完成后，当前模式为随机播放模式destPosition:"+currentPos);
-                            play(data.get(currentPos),currentPos,System.currentTimeMillis());
+                            play(currentPos);
                             break;
                         default:
                             break;
@@ -198,7 +199,6 @@ public class MediaPlayService extends Service{
         Log.d("chan","onDestroy ....");
 
         timer.cancel();
-        mBus.unregister(this);
         //shutDownMonitor();
         mediaPlayer.release();
         mediaPlayer = null;
@@ -206,23 +206,22 @@ public class MediaPlayService extends Service{
     }
 
     /**
-     * @param song
-     * @param position 歌曲在list中的位置，即在data中的位置
+     * @param position 歌曲在list中的位置，播放队列中的位置
      */
-    public void play(SongDetailEntity song,int position,long clickTime){
+    public void play(int position){
         currentPos = position;
         //mClickTime = clickTime;
-        mClickTime = System.currentTimeMillis();
+        long mClickTime = System.currentTimeMillis();
         if(mediaPlayer != null){
             try {
                 //如果当前正在播放
 //                mediaPlayer.reset();
                 Log.d("chan","position=" + position);
-                Log.d("chan", "play current song " + data.get(position).getTitle() + "position=" + position);
+                Log.d("chan", "play current song " + mQueue.get(position).getTitle() + "position=" + position);
                 //Log.d("chan","will play :"+data.get(position).getPath());
-                File file = new File(data.get(position).getPath());
+                File file = new File(mQueue.get(position).getPath());
                 if(file.exists()){
-                    mSong = song;
+                    mSong = mQueue.get(position);   //current song
                     //发布事件，为了在activity下显示歌曲信息（title,artist,progress）
                     Log.d(TAG,"歌曲总长度："+mediaPlayer.getDuration());
                     //设置歌曲总长度
@@ -266,16 +265,6 @@ public class MediaPlayService extends Service{
    }
 
 
-   public void onEventMainThread(MyEvent event){
-           if(event != null){
-               if(event.getIsDataUpdate()){
-                   data.clear();
-                   BaseApplication app = (BaseApplication) getApplicationContext();
-                   data.addAll(app.getAllData());
-               }
-
-           }
-   }
 
     //用来处理用户拖动seek bar事件
     public class MediaPlayerServiceBroadcastRec extends BroadcastReceiver{
@@ -304,7 +293,7 @@ public class MediaPlayService extends Service{
                         e.printStackTrace();
                     }
                 }else if(MyConstants.MyAction.PLAY_CLICKED_ACTION.equals(action)){
-                    Log.d("chan","PLAY BUTTON IS CLICKED ...");
+                    //Log.d("chan","PLAY BUTTON IS CLICKED ...");
                     //如果当前是播放状态，暂停播放
                     if(mediaPlayer != null && mediaPlayer.isPlaying()){
                         mediaPlayer.pause();
@@ -321,21 +310,46 @@ public class MediaPlayService extends Service{
                 }else if(MyConstants.MyAction.PREV_CLICKED_ACTION.equals(action)){
                     Log.d("chan","PREV BUTTON IS CLICKED ...");
                     //播放前一首歌
-                    if(currentPos == 0){
-                        currentPos = data.size()-1;
-                    }else{
-                        currentPos --;
+                    //如果当前播放队列只有一首歌,将该歌曲在总的队列中的前一首加入队列，并播放
+                    if(mQueue.size() == 1){
+                        int pos = getPosFromAllData(mQueue.get(0));
+                        ArrayList<SongDetailEntity> list = mApplication.getAllData();
+                        if(0 == pos){
+                            //将最后一首放如播放队列
+                            mQueue.add(list.get(list.size()-1));
+                            currentPos = mQueue.size()-1;
+                        }else{
+                            mQueue.add(list.get(pos-1));
+                            currentPos = mQueue.size()-1;
+                        }
+                    }else {
+                        if (currentPos == 0) {
+                            currentPos = mQueue.size()-1;
+                        } else {
+                            currentPos--;
+                        }
                     }
-                    play(data.get(currentPos),currentPos,System.currentTimeMillis());
-
+                    play(currentPos);
                 }else if(MyConstants.MyAction.NEXT_CLICKED_ACTION.equals(action)){
                     Log.d("chan","NEXT BUTTON IS CLICKED ...");
-                    if(currentPos == data.size()-1){
-                        currentPos = 0;
+                    if(mQueue.size() == 1){
+                        int pos = getPosFromAllData(mQueue.get(0));
+                        Log.d("chan","*****next*****currentPos="+currentPos);
+                        if(pos == (mApplication.getAllData().size()-1)){//如果当前播放队列中是最后一首歌
+                            mQueue.add(mApplication.getAllData().get(0));
+                            currentPos = mQueue.size()-1;
+                        }else{
+                            mQueue.add(mApplication.getAllData().get(pos+1));
+                            currentPos = mQueue.size()-1;
+                        }
                     }else{
-                        currentPos ++;
+                        if(currentPos == mQueue.size()-1){
+                            currentPos = 0;
+                        }else{
+                            currentPos ++;
+                        }
                     }
-                    play(data.get(currentPos),currentPos,System.currentTimeMillis());
+                    play(currentPos);
                 }
             }
 
@@ -348,5 +362,11 @@ public class MediaPlayService extends Service{
     public int checkPlayMode(){
         SharedPreferences sp = getSharedPreferences(MyConstants.SharedPreferencesData.FILE_NAME, Activity.MODE_PRIVATE);
         return sp.getInt(MyConstants.SharedPreferencesData.FIELD_NAME_PLAY_MODE,-1);
+    }
+
+    //查找该歌曲在所有数据中的位置(依据：同一个人的同一首歌只会存在一首)
+    public int getPosFromAllData(SongDetailEntity song){
+        ArrayList<SongDetailEntity> list = mApplication.getAllData();
+        return list.indexOf(song);
     }
 }

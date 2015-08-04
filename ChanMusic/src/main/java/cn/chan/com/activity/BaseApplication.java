@@ -2,6 +2,11 @@ package cn.chan.com.activity;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.PopupWindow;
 
 import java.util.ArrayList;
 
@@ -33,6 +38,7 @@ public class BaseApplication extends Application {
         initData();
     }
 
+
     public int getPLAYING_STATUS() {
         return PLAYING_STATUS;
     }
@@ -50,11 +56,20 @@ public class BaseApplication extends Application {
     }
 
     public ArrayList<SongDetailEntity> getPlayingQueue() {
+        //test 为了测试playing queue中操作的数据是不是同一块内存
+//        for(SongDetailEntity song:playingQueue){
+//            Log.d("chan","test:"+song.getTitle()+":"+song.getFavor()+" | ");
+//        }
+        //Log.d("chan","test:"+playingQueue.size());
         return playingQueue;
     }
 
-    public void setPlayingQueue(ArrayList<SongDetailEntity> playingQueue) {
-        this.playingQueue = playingQueue;
+    public void setPlayingQueue(ArrayList<SongDetailEntity> queue) {
+//        if(this.playingQueue != null){
+//            this.playingQueue.clear();
+//        }
+        this.playingQueue.addAll(queue);
+        //this.playingQueue.addAll(playingQueue);
     }
     
     private void initData(){
@@ -67,4 +82,10 @@ public class BaseApplication extends Application {
     public void addToPlayingQueue(SongDetailEntity song){
         playingQueue.add(song);
     }
+
+    public void clearPlayingQueue() {
+        playingQueue.clear();
+    }
+
+
 }

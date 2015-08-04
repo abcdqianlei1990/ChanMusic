@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="#B8D5ED"
+    android:background="@drawable/background_corner"
     android:layout_width="match_parent" android:layout_height="match_parent">
     <TextView
         android:layout_width="match_parent"
@@ -9,7 +9,7 @@
         android:textStyle="bold"
         android:textSize="30dp"
         android:text="乐库"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:layout_marginLeft="20dp"
         />
     <ImageView
@@ -25,5 +25,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:textSize="25dp"
+        android:textColor="@android:color/white"
         android:text="排行榜 | 歌手 | 歌单 | 分类"/>
 </LinearLayout>

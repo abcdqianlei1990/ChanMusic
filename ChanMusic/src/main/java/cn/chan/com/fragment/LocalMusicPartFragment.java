@@ -1,11 +1,13 @@
 package cn.chan.com.fragment;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +17,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import cn.chan.com.activity.BaseApplication;
 import cn.chan.com.activity.LocalMusicActivity;
 import cn.chan.com.activity.R;
+import cn.chan.com.entity.SongDetailEntity;
 import cn.chan.com.util.MeasureView;
+import cn.chan.com.util.MyConstants;
 
 /**
  * Created by Administrator on 2015/7/20.
@@ -34,6 +41,8 @@ public class LocalMusicPartFragment extends Fragment implements View.OnClickList
     private View mView;
     private View mImageText;
     private Context mContext;
+    private ArrayList<SongDetailEntity> list = new ArrayList<SongDetailEntity>();
+    private BaseApplication mApplication;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -49,6 +58,7 @@ public class LocalMusicPartFragment extends Fragment implements View.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.local_music_part_fragment,container,false);
         initParams();
+        initViews();
         initEvents();
         return mView;
 
@@ -100,9 +110,13 @@ public class LocalMusicPartFragment extends Fragment implements View.OnClickList
         mImageText =mView.findViewById(R.id.image_up_text_down);
         mJumpView = (LinearLayout) mView.findViewById(R.id.jump_to_local_music);
         mContext = getActivity();
+        mApplication = (BaseApplication) mContext.getApplicationContext();
+        list = mApplication.getAllData();
+    }
+    private void initViews(){
+        mAllSongs.setText(list.size()+"首");
     }
     public void initEvents(){
-        mAllSongs.setOnClickListener(this);
         mPlayBtn.setOnClickListener(this);
         mMyLike.setOnClickListener(this);
         mMyList.setOnClickListener(this);
@@ -122,7 +136,12 @@ public class LocalMusicPartFragment extends Fragment implements View.OnClickList
                 startActivity(intent);
                 break;
             case R.id.ib_start:
-                Toast.makeText(mContext,"start to play...",Toast.LENGTH_SHORT).show();
+                //播放所有
+                ArrayList<SongDetailEntity> queue =  mApplication.getPlayingQueue();
+                queue.clear();
+                queue.addAll(list);
+                Intent i = new Intent(MyConstants.MyAction.PLAY_CLICKED_ACTION);
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(i);
                 break;
             case R.id.ib_my_like:
                 Toast.makeText(mContext,"my like clicked...",Toast.LENGTH_SHORT).show();

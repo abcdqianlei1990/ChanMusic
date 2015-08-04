@@ -33,6 +33,7 @@ import cn.chan.com.util.MyConstants;
 public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.SongsListItemViewHolder>{
     private static final String TAG = "SongsListAdapter";
     private static ArrayList<SongDetailEntity> data = new ArrayList<SongDetailEntity>();
+    private static ArrayList<SongDetailEntity> playingQueue = new ArrayList<SongDetailEntity>();
     private Context context;
     private static MediaPlayService service;
 
@@ -43,6 +44,7 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
         BaseApplication app = (BaseApplication) context.getApplicationContext();
         ArrayList<SongDetailEntity> allData = app.getAllData();
         this.data = allData;
+        playingQueue = app.getPlayingQueue();
         //Log.d("chan","Adapter构造方法,获取内存中数据，size："+allData.size());
     }
     @Override
@@ -98,7 +100,9 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
                 public void onClick(View view) {
 
                         if(service != null){
-                            service.play(data.get(getLayoutPosition()),getLayoutPosition(),System.currentTimeMillis());
+                            addToQueue();
+                            //插入到尾部，即播放队列中最后一首
+                            service.play(playingQueue.size()-1);
                         }else{
                             Log.d("chan","service is NULL !");
                         }
@@ -110,13 +114,16 @@ public class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Song
                 public void onClick(View v) {
                     //Toast.makeText(context,"add button is clicked,the song will add to playing queue.",Toast.LENGTH_SHORT).show();
                   Log.d("chan","add button is clicked,the song will add to playing queue.");
-                    //将该歌曲添加到播放队列 playing queue
-                    BaseApplication app = (BaseApplication) context.getApplicationContext();
-                    ArrayList<SongDetailEntity> allData = app.getAllData();
-                    app.addToPlayingQueue(allData.get(getLayoutPosition()));    //add to playing queue
+                  addToQueue();
                 }
             });
         }
+
+        public void addToQueue(){
+            //将该歌曲添加到播放队列 playing queue
+            playingQueue.add(data.get(getLayoutPosition()));
+        }
+
     }
 }
 
